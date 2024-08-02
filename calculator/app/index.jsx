@@ -6,7 +6,6 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
-  const [display, setDisplay] = useState("");
   const [loaded, error] = useFonts({
     Ndot: require("../assets/fonts/ndot-45.ttf"),
   });
@@ -20,6 +19,48 @@ export default function Index() {
   if (!loaded && !error) {
     return null;
   }
+
+  const [displayValue, setDisplayValue] = useState("0");
+  const [operator, setOperator] = useState(null);
+  const [firstValue, setFirstValue] = useState("");
+
+  const handleNumberInput = (num) => {
+    if (displayValue === "0") {
+      setDisplayValue(num.toString());
+    } else {
+      setDisplayValue(displayValue + num);
+    }
+  };
+
+  const handleOperatorInput = (operator) => {
+    setOperator(operator);
+    setFirstValue(displayValue);
+    setDisplayValue("0");
+  };
+
+  const handleEqual = () => {
+    const num1 = parseFloat(firstValue);
+    const num2 = parseFloat(displayValue);
+
+    if (operator === "+") {
+      setDisplayValue((num1 + num2).toString());
+    } else if (operator === "-") {
+      setDisplayValue((num1 - num2).toString());
+    } else if (operator === "*") {
+      setDisplayValue((num1 * num2).toString());
+    } else if (operator === "/") {
+      setDisplayValue((num1 / num2).toString());
+    }
+
+    setOperator(null);
+    setFirstValue("");
+  };
+
+  const handleClear = () => {
+    setDisplayValue("0");
+    setOperator(null);
+    setFirstValue("");
+  };
 
   return (
     <View
@@ -73,7 +114,7 @@ export default function Index() {
               alignItems: "flex-end",
             }}
           >
-            500 + 500
+            {displayValue}
           </Text>
         </View>
       </View>
@@ -103,6 +144,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 50,
             }}
+            onPress={() => handleClear()}
           >
             <Text
               style={{
@@ -197,6 +239,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(7)}
           >
             <Text
               style={{
@@ -218,6 +261,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(8)}
           >
             <Text
               style={{
@@ -239,6 +283,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(9)}
           >
             <Text
               style={{
@@ -260,6 +305,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleOperatorInput("/")}
           >
             <Text
               style={{
@@ -291,6 +337,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(4)}
           >
             <Text
               style={{
@@ -312,6 +359,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(5)}
           >
             <Text
               style={{
@@ -333,6 +381,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(6)}
           >
             <Text
               style={{
@@ -354,6 +403,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleOperatorInput("*")}
           >
             <Text
               style={{
@@ -385,6 +435,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(1)}
           >
             <Text
               style={{
@@ -406,6 +457,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(2)}
           >
             <Text
               style={{
@@ -427,6 +479,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(3)}
           >
             <Text
               style={{
@@ -448,6 +501,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleOperatorInput("+")}
           >
             <Text
               style={{
@@ -479,6 +533,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(0o0)}
           >
             <Text
               style={{
@@ -500,6 +555,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleNumberInput(0)}
           >
             <Text
               style={{
@@ -521,6 +577,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleOperatorInput(".")}
           >
             <Text
               style={{
@@ -542,6 +599,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
+            onPress={() => handleEqual()}
           >
             <Text
               style={{
