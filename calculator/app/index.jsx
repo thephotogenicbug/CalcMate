@@ -78,7 +78,7 @@ export default function Index() {
     <View
       style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" }}
     >
-      <Text style={{ color: "#ffffff", fontSize: 34 }}>
+      <Text style={{ color: "#ffffff", fontSize: 34, fontFamily: "Ndot" }}>
         {item.expression} = {item.result}
       </Text>
     </View>
@@ -668,7 +668,11 @@ export default function Index() {
                 gap: 50,
               }}
             >
-              <Text style={{ color: "#ffffff", fontSize: 25 }}>History</Text>
+              <Text
+                style={{ color: "#ffffff", fontSize: 25, fontFamily: "Ndot" }}
+              >
+                History
+              </Text>
               <TouchableOpacity
                 style={{
                   width: 50,
