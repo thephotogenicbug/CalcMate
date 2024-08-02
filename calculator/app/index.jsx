@@ -1,14 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
   const [loaded, error] = useFonts({
     Ndot: require("../assets/fonts/ndot-45.ttf"),
   });
+
+  const [displayValue, setDisplayValue] = useState("0");
+  const [operator, setOperator] = useState(null);
+  const [firstValue, setFirstValue] = useState("");
+  const [history, setHistory] = useState([]);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
 
   useEffect(() => {
     if (loaded || error) {
@@ -19,10 +27,6 @@ export default function Index() {
   if (!loaded && !error) {
     return null;
   }
-
-  const [displayValue, setDisplayValue] = useState("0");
-  const [operator, setOperator] = useState(null);
-  const [firstValue, setFirstValue] = useState("");
 
   const handleNumberInput = (num) => {
     if (displayValue === "0") {
@@ -41,17 +45,25 @@ export default function Index() {
   const handleEqual = () => {
     const num1 = parseFloat(firstValue);
     const num2 = parseFloat(displayValue);
+    let result = "";
 
     if (operator === "+") {
-      setDisplayValue((num1 + num2).toString());
+      result = (num1 + num2).toString();
     } else if (operator === "-") {
-      setDisplayValue((num1 - num2).toString());
+      result = (num1 - num2).toString();
     } else if (operator === "*") {
-      setDisplayValue((num1 * num2).toString());
+      result = (num1 * num2).toString();
     } else if (operator === "/") {
-      setDisplayValue((num1 / num2).toString());
+      result = (num1 / num2).toString();
     }
 
+    // Update history
+    setHistory([
+      ...history,
+      { expression: `${firstValue} ${operator} ${displayValue}`, result },
+    ]);
+
+    setDisplayValue(result);
     setOperator(null);
     setFirstValue("");
   };
@@ -61,6 +73,16 @@ export default function Index() {
     setOperator(null);
     setFirstValue("");
   };
+
+  const renderHistoryItem = ({ item }) => (
+    <View
+      style={{ padding: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" }}
+    >
+      <Text style={{ color: "#ffffff", fontSize: 34 }}>
+        {item.expression} = {item.result}
+      </Text>
+    </View>
+  );
 
   return (
     <View
@@ -91,7 +113,9 @@ export default function Index() {
             position: "absolute",
           }}
         >
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setIsHistoryVisible(!isHistoryVisible)}
+          >
             <MaterialIcons name="history-toggle-off" size={24} color="white" />
           </TouchableOpacity>
         </View>
@@ -150,7 +174,6 @@ export default function Index() {
               style={{
                 color: "#ffffff",
                 fontSize: 21,
-
                 textAlign: "center",
               }}
             >
@@ -171,7 +194,6 @@ export default function Index() {
               style={{
                 color: "#ffffff",
                 fontSize: 21,
-
                 textAlign: "center",
               }}
             >
@@ -192,7 +214,6 @@ export default function Index() {
               style={{
                 color: "#ffffff",
                 fontSize: 21,
-
                 textAlign: "center",
               }}
             >
@@ -213,7 +234,6 @@ export default function Index() {
               style={{
                 color: "#ffffff",
                 fontSize: 21,
-
                 textAlign: "center",
               }}
             >
@@ -614,6 +634,66 @@ export default function Index() {
           </TouchableOpacity>
         </View>
       </View>
+      <Modal
+        visible={isHistoryVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setIsHistoryVisible(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <View
+            style={{
+              height: "100%",
+              backgroundColor: "#000",
+              padding: 20,
+              borderRadius: 10,
+              width: "100%",
+              display: "flex",
+              gap: 20,
+            }}
+          >
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                gap: 50,
+              }}
+            >
+              <Text style={{ color: "#ffffff", fontSize: 25 }}>History</Text>
+              <TouchableOpacity
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 50,
+                  backgroundColor: "#d93434",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                onPress={() => setIsHistoryVisible(false)}
+              >
+                <AntDesign name="close" size={30} color="white" />
+              </TouchableOpacity>
+            </View>
+            <View></View>
+
+            <FlatList
+              data={history}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderHistoryItem}
+            />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
