@@ -4,6 +4,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,15 +38,51 @@ export default function Index() {
   };
 
   const handleOperatorInput = (operator) => {
+    if (operator === ".") {
+      // Split the displayValue into parts based on spaces to get the current number
+      const parts = displayValue.split(" ");
+      const lastPart = parts[parts.length - 1];
+
+      // Prevent multiple dots in the same number
+      if (lastPart.includes(".")) {
+        return;
+      }
+
+      // Handle the case where the display value is empty or ends with an operator
+      if (
+        displayValue === "" ||
+        ["+", "-", "*", "/"].includes(displayValue.slice(-1))
+      ) {
+        setDisplayValue("0."); // Add a leading zero before the dot
+        return;
+      }
+
+      setDisplayValue(displayValue + operator);
+      return;
+    }
+
+    // Handle other operators
+    if (
+      ["+", "-", "*", "/"].includes(operator) &&
+      (displayValue.slice(-1) === " " ||
+        displayValue === "" ||
+        displayValue === "0")
+    ) {
+      return; // Prevent operators at inappropriate places
+    }
+
+    setDisplayValue((prev) => prev + " " + operator + " ");
+
     setOperator(operator);
     setFirstValue(displayValue);
-    setDisplayValue("0");
+    setDisplayValue("");
   };
 
   const handleEqual = () => {
+    let result = "";
+
     const num1 = parseFloat(firstValue);
     const num2 = parseFloat(displayValue);
-    let result = "";
 
     if (operator === "+") {
       result = (num1 + num2).toString();
@@ -55,6 +92,10 @@ export default function Index() {
       result = (num1 * num2).toString();
     } else if (operator === "/") {
       result = (num1 / num2).toString();
+    } else if (operator === "√") {
+      result = `${Math.sqrt(num1)}`;
+    } else if (operator === "%") {
+      result = (num1 % num2).toString();
     }
 
     // Update history
@@ -72,6 +113,14 @@ export default function Index() {
     setDisplayValue("0");
     setOperator(null);
     setFirstValue("");
+  };
+
+  const handleBackspace = () => {
+    if (displayValue.length > 1) {
+      setDisplayValue(displayValue.slice(0, -1));
+    } else {
+      setDisplayValue("0"); // Reset to "0" if nothing to remove
+    }
   };
 
   const renderHistoryItem = ({ item }) => (
@@ -155,7 +204,7 @@ export default function Index() {
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
-            gap: 20,
+            gap: 10,
             marginBottom: 30,
           }}
         >
@@ -189,6 +238,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 50,
             }}
+            onPress={() => handleOperatorInput("√")}
           >
             <Text
               style={{
@@ -197,7 +247,7 @@ export default function Index() {
                 textAlign: "center",
               }}
             >
-              ( )
+              √
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -209,6 +259,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 50,
             }}
+            onPress={() => handleOperatorInput("%")}
           >
             <Text
               style={{
@@ -220,7 +271,7 @@ export default function Index() {
               %
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               width: 70,
               height: 70,
@@ -229,6 +280,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 50,
             }}
+            onPress={() => handleOperatorInput("-")}
           >
             <Text
               style={{
@@ -237,7 +289,29 @@ export default function Index() {
                 textAlign: "center",
               }}
             >
-              √
+              <FontAwesome5 name="backspace" size={24} color="white" />
+            </Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            style={{
+              width: 90,
+              height: 60,
+              backgroundColor: "#d93434",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: 30,
+            }}
+            onPress={() => handleOperatorInput("-")}
+          >
+            <Text
+              style={{
+                color: "#ffffff",
+                fontSize: 27,
+                fontFamily: "Ndot",
+                textAlign: "center",
+              }}
+            >
+              -
             </Text>
           </TouchableOpacity>
         </View>
@@ -553,7 +627,7 @@ export default function Index() {
               alignItems: "center",
               borderRadius: 30,
             }}
-            onPress={() => handleNumberInput(0o0)}
+            onPress={() => handleNumberInput("00")}
           >
             <Text
               style={{
