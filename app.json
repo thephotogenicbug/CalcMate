@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "calculator",
-    "slug": "calculator",
-    "version": "1.0.0",
+    "name": "CalcMate",
+    "slug": "Calcmate",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
@@ -10,16 +10,17 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#000000"
+      },
+      "package": "com.thephotogenicbug.Calcmate"
     },
     "web": {
       "bundler": "metro",
@@ -29,6 +30,14 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f1d4a4f3-2a9f-4a7b-93bb-9bcfe1b9b700"
+      }
     }
   }
 }
